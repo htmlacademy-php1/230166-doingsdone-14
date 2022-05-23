@@ -1,6 +1,7 @@
 <?php
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
+require_once 'init.php'
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -42,10 +43,12 @@ $show_complete_tasks = rand(0, 1);
 
                 <nav class="main-navigation">
                     <ul class="main-navigation__list">
+                        <?php foreach ($projects as $project) : ?>
                         <li class="main-navigation__list-item">
-                            <a class="main-navigation__list-item-link" href="#">Название проекта</a>
+                            <a class="main-navigation__list-item-link" href="#"><?= $project ?></a>
                             <span class="main-navigation__list-item-count">0</span>
                         </li>
+                        <? endforeach; ?>
                     </ul>
                 </nav>
 
@@ -78,20 +81,32 @@ $show_complete_tasks = rand(0, 1);
                 </div>
 
                 <table class="tasks">
-                    <tr class="tasks__item task">
-                        <td class="task__select">
-                            <label class="checkbox task__checkbox">
-                                <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
-                                <span class="checkbox__text">Сделать главную страницу Дела в порядке</span>
-                            </label>
-                        </td>
+                    <?php foreach ($tasks as $task) : ?>
+                        <?php if (!$show_complete_tasks && $task['ready']) {
+                                continue;
+                            }
+                        ?>
+                        <tr class="tasks__item task <?= $task['ready'] ? 'task--completed' : ''; ?>">
+                            <td class="task__select">
+                                <label class="checkbox task__checkbox">
+                                    <input
+                                        class="checkbox__input visually-hidden task__checkbox"
+                                        type="checkbox"
+                                        value="1"
+                                        <?= $task['ready'] ? 'checked' : ''; ?>
+                                    >
+                                    <span class="checkbox__text"><?= $task['name'] ?></span>
+                                </label>
+                            </td>
 
-                        <td class="task__file">
-                            <a class="download-link" href="#">Home.psd</a>
-                        </td>
+                            <td class="task__file">
+                                <a class="download-link" href="#">Home.psd</a>
+                            </td>
 
-                        <td class="task__date"></td>
-                    </tr>
+                            <td class="task__date"><?= $task['date'] ?></td>
+                        </tr>
+                    <? endforeach ?>
+                    <!--показывать следующий тег <tr/>, если переменная $show_complete_tasks равна единице-->
                     <?php if ($show_complete_tasks) : ?>
                         <tr class="tasks__item task task--completed">
                             <td class="task__select">
@@ -105,7 +120,6 @@ $show_complete_tasks = rand(0, 1);
                             </td>
                         </tr>
                     <? endif; ?>
-                    <!--показывать следующий тег <tr/>, если переменная $show_complete_tasks равна единице-->
                 </table>
             </main>
         </div>
