@@ -51,7 +51,10 @@
                         continue;
                     }
                 ?>
-                <tr class="tasks__item task <?= $task['ready'] ? 'task--completed' : ''; ?>">
+                <tr class="tasks__item task
+                    <?= $task['ready'] ? 'task--completed' : ''; ?>
+                    <?= check_less_than_day($task['date']) ? 'task--important' : ''; ?>
+                ">
                     <td class="task__select">
                         <label class="checkbox task__checkbox">
                             <input

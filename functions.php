@@ -30,3 +30,22 @@ function esc($string)
 {
     return htmlspecialchars($string);
 }
+
+/**
+ *  Проверка даты, до которой осталось меньше 24 часов
+ *
+ * @param  mixed $date
+ * @return void
+ */
+function check_less_than_day($date)
+{
+    $current_date = time();
+    $date = strtotime($date);
+    $dif = $date - $current_date;
+
+    if ($dif <= 86400) {
+        return true;
+    }
+
+    return false;
+}
