@@ -1,7 +1,7 @@
 # Личный проект «Дела в Порядке»
 
 * Студент: [Маргарита  Попова](https://up.htmlacademy.ru/php/14/user/230166).
-* Наставник: `[Антон Попов](https://htmlacademy.ru/profile/joker)`.
+* Наставник: [Антон Попов](https://htmlacademy.ru/profile/joker).
 
 ---
 
