@@ -46,7 +46,9 @@ require_once 'init.php'
                         <?php foreach ($projects as $project) : ?>
                         <li class="main-navigation__list-item">
                             <a class="main-navigation__list-item-link" href="#"><?= $project ?></a>
-                            <span class="main-navigation__list-item-count">0</span>
+                            <span class="main-navigation__list-item-count">
+                                <?= count_tasks_in_project($tasks, $project); ?>
+                            </span>
                         </li>
                         <? endforeach; ?>
                     </ul>
