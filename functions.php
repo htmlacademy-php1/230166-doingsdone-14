@@ -19,3 +19,14 @@ function count_tasks_in_project($tasks, $project)
 
     return $count;
 }
+
+/**
+ * Защита от XSS атак
+ *
+ * @param  string $string
+ * @return string
+ */
+function esc($string)
+{
+    return htmlspecialchars($string);
+}
