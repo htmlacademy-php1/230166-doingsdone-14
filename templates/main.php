@@ -5,8 +5,8 @@
         <nav class="main-navigation">
             <ul class="main-navigation__list">
                 <?php foreach ($projects as $project) : ?>
-                <li class="main-navigation__list-item">
-                    <a class="main-navigation__list-item-link" href="#">
+                <li class="main-navigation__list-item <?= $project['id'] === $project_id ? 'main-navigation__list-item--active' : ''; ?>">
+                    <a class="main-navigation__list-item-link" href="?project_id=<?= $project['id']; ?>">
                         <?= esc($project['name']) ?>
                     </a>
                     <span class="main-navigation__list-item-count">
@@ -47,33 +47,33 @@
 
         <table class="tasks">
             <?php foreach ($tasks as $task) : ?>
-                <?php if (!$show_complete_tasks && $task['is_ready']) : continue; endif; ?>
-                <tr class="tasks__item task <?= $task['is_ready'] ? 'task--completed' : ''; ?> <?= check_less_than_day($task['date']) ? 'task--important' : ''; ?>">
-                    <td class="task__select">
-                        <label class="checkbox task__checkbox">
-                            <input
-                                class="checkbox__input visually-hidden task__checkbox"
-                                type="checkbox"
-                                value="1"
-                                <?= $task['is_ready'] ? 'checked' : ''; ?>
-                            >
-                            <span class="checkbox__text">
-                                <?= esc($task['name']) ?>
-                            </span>
-                        </label>
-                    </td>
+            <?php if (!$show_complete_tasks && $task['is_ready']) : continue; endif; ?>
+            <tr class="tasks__item task <?= $task['is_ready'] ? 'task--completed' : ''; ?> <?= check_less_than_day($task['date']) ? 'task--important' : ''; ?>">
+                <td class="task__select">
+                    <label class="checkbox task__checkbox">
+                        <input
+                            class="checkbox__input visually-hidden task__checkbox"
+                            type="checkbox"
+                            value="1"
+                            <?= $task['is_ready'] ? 'checked' : ''; ?>
+                        >
+                        <span class="checkbox__text">
+                            <?= esc($task['name']); ?>
+                        </span>
+                    </label>
+                </td>
 
-                    <td class="task__file">
-                        <a class="download-link" href="#">
-                            <?= esc($task['file_url']); ?>
-                        </a>
-                    </td>
+                <td class="task__file">
+                    <a class="download-link" href="#">
+                        <?= esc($task['file_url']); ?>
+                    </a>
+                </td>
 
-                    <td class="task__date">
-                        <?= esc($task['finish_date']) ?>
-                    </td>
-                </tr>
-            <? endforeach ?>
+                <td class="task__date">
+                    <?= esc($task['finish_date']); ?>
+                </td>
+            </tr>
+            <? endforeach; ?>
         </table>
     </main>
 </div>
