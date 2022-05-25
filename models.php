@@ -53,6 +53,7 @@ function get_user_no_completed_tasks($con, $user_id, $project_id = null)
 
     if ($project_id) {
         $project_id = mysqli_real_escape_string($con, $project_id);
+
         $sql = "SELECT * FROM task
                     WHERE
                         user_id = $user_id
@@ -73,7 +74,7 @@ function get_user_no_completed_tasks($con, $user_id, $project_id = null)
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
-    show_error('get_user_tasks ' . mysqli_error($con));
+    show_error('get_user_no_completed_tasks ' . mysqli_error($con));
 }
 
 /**
@@ -89,6 +90,7 @@ function get_all_user_tasks($con, $user_id, $project_id = null)
 
     if ($project_id) {
         $project_id = mysqli_real_escape_string($con, $project_id);
+
         $sql = "SELECT * FROM task
                     WHERE
                         user_id = $user_id
@@ -107,7 +109,44 @@ function get_all_user_tasks($con, $user_id, $project_id = null)
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
-    show_error('get_user_tasks ' . mysqli_error($con));
+    show_error('get_all_user_tasks ' . mysqli_error($con));
+}
+
+/**
+ * получение списка из всех задач для одного пользователя
+ *
+ * @param  mysqli $con
+ * @param  int $user_id
+ * @return array
+ */
+function get_today_user_tasks($con, $user_id, $project_id = null)
+{
+    $user_id = mysqli_real_escape_string($con, $user_id);
+
+    if ($project_id) {
+        $project_id = mysqli_real_escape_string($con, $project_id);
+
+        $sql = "SELECT * FROM task
+                    WHERE
+                        user_id = $user_id
+                        AND project_id = $project_id
+                        AND date_add < DATE_SUB(NOW(), INTERVAL 1 DAY)
+                    ORDER BY date_add";
+    } else {
+        $sql = "SELECT * FROM task
+                    WHERE
+                        user_id = $user_id
+                        AND date_add < DATE_SUB(NOW(), INTERVAL 1 DAY)
+                    ORDER BY date_add";
+    }
+
+    $result = mysqli_query($con, $sql);
+
+    if ($result) {
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+
+    show_error('get_today_user_tasks ' . mysqli_error($con));
 }
 
 /**

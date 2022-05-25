@@ -21,16 +21,18 @@ $show_completed_tasks = filter_input(INPUT_GET, 'show_completed', FILTER_SANITIZ
 $search = trim(filter_input(INPUT_GET, 'search')) ?? null;
 $filter = filter_input(INPUT_GET, 'filter');
 
-if ($task_id && check_task_id($con, $task_id)) {
-    if ($task_check) {
-        complete_task($con, $task_id);
-    } else {
-        remove_complete_task($con, $task_id);
-    }
-}
-
 $tasks = get_user_no_completed_tasks($con, $user_id, $project_id);
 $projects = get_projects($con, $user_id);
+
+if ($task_id && !check_task_id($con, $task_id)) {
+    show_error('Такой задачи не существует');
+}
+
+if ($task_id && $task_check) {
+    complete_task($con, $task_id);
+} elseif ($task_id && !$task_check) {
+    remove_complete_task($con, $task_id);
+}
 
 if ($show_completed_tasks) {
     $tasks = get_all_user_tasks($con, $user_id, $project_id = null);
@@ -38,6 +40,10 @@ if ($show_completed_tasks) {
 
 if ($search) {
     $tasks = get_search_results($con, $search);
+}
+
+if ($filter === 'today') {
+    $tasks = get_today_user_tasks($con, $user_id, $project_id);
 }
 
 $content = include_template('main.php', [
