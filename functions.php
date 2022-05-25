@@ -98,7 +98,7 @@ function get_task_errors($con, $task_name, $project_id, $deadline)
     $errors = [];
 
     if (!$task_name) {
-        $errors['task_name'] = "Поле надо заполнить";
+        $errors['task_name'] = 'Поле надо заполнить';
     } elseif (!check_length($task_name, 1, 128)) {
         $errors['task_name'] = 'Количество символов должно быть не более 128';
     }
@@ -138,4 +138,40 @@ function get_file_url($field_name)
     }
 
     return null;
+}
+
+/**
+ * Валидация формы регистрации
+ *
+ * @param  mysqli $con
+ * @param  string $email
+ * @param  string $password
+ * @param  string $login
+ * @return array
+ */
+function get_register_errors($con, $email, $password, $login)
+{
+    $errors = [];
+
+    if (!$email) {
+        $errors['email'] = 'Поле надо заполнить';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Неправильный формат почты';
+    } elseif (check_user_email($con, $email)) {
+        $errors['email'] = 'Пользователь с такой почтой уже зарегистрирован';
+    }
+
+    if (!$password) {
+        $errors['password'] = 'Поле надо заполнить';
+    } elseif (!check_length($password, 6, 20)) {
+        $errors['password'] = 'Пароль должен состоять минимум из 6 символов';
+    }
+
+    if (!$login) {
+        $errors['login'] = 'Поле надо заполнить';
+    } elseif (!check_length($login, 1, 255)) {
+        $errors['login'] = 'Количество символов должно быть не более 255';
+    }
+
+    return array_filter($errors);
 }

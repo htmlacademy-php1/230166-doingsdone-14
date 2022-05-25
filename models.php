@@ -140,3 +140,46 @@ function add_task($con, $values)
         show_error('add_task' . mysqli_error($con));
     }
 }
+
+/**
+ * Проверка email
+ *
+ * @param  mysqli $con
+ * @param  string $email
+ * @return bool
+ */
+function check_user_email($con, $email)
+{
+    $email = mysqli_real_escape_string($con, $email);
+    $sql = "SELECT email FROM user WHERE email = '$email'";
+    $result = mysqli_query($con, $sql);
+
+    if ($result) {
+        $email = mysqli_fetch_assoc($result);
+
+        if ($email) {
+            return true;
+        }
+        return false;
+    }
+
+    show_error('check_user_email ' . mysqli_error($con));
+}
+
+/**
+ * Добавление нового пользователя
+ *
+ * @param  mysqli $con
+ * @param  array $values
+ * @return void
+ */
+function add_user($con, $values)
+{
+    $sql = "INSERT INTO user (email, password, login) VALUES (?, ?, ?)";
+    $stmt = db_get_prepare_stmt($con, $sql, $values);
+    $result = mysqli_stmt_execute($stmt);
+
+    if (!$result) {
+        show_error('add_user' . mysqli_error($con));
+    }
+}

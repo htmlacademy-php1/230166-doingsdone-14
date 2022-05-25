@@ -13,7 +13,6 @@ CREATE TABLE user (
   email VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
 
-  UNIQUE INDEX user_login (login),
   UNIQUE INDEX user_email (email)
 );
 
