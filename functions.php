@@ -32,20 +32,110 @@ function esc($string)
 }
 
 /**
- *  Проверка даты, до которой осталось меньше 24 часов
+ *  Полчение даты в часах
+ *
+ * @param  mixed $date
+ * @return int
+ */
+function get_hours($date)
+{
+    if ($date) {
+        return floor((strtotime($date) - time()) / 60 * 60);
+    }
+
+    return null;
+}
+
+/**
+ * Прверяет количество символов в сообщении, максимальное и минимальное значение,
+ * возвращает сообщение об ошибке
+ *
+ * @param int $id категория, которую ввел пользователь в форму
+ * @param array $allowed_list Список существующих категорий
+ * @return string Текст сообщения об ошибке
+ */
+function check_length($value, $min, $max)
+{
+    if ($value) {
+        $len = strlen($value);
+        if ($len >= $min or $len <= $max) {
+            return true;
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Проверка дата больше или равна текущей
  *
  * @param  mixed $date
  * @return void
  */
-function check_less_than_day($date)
+function check_correct_date($date)
 {
     $current_date = time();
     $date = strtotime($date);
-    $dif = $date - $current_date;
 
-    if ($dif <= 86400) {
+    if ($date >= $current_date) {
         return true;
     }
 
     return false;
+}
+
+/**
+ * Валидация для формы добавления задачи
+ *
+ * @param  mysqli $con
+ * @param  string $task_name
+ * @param  int $project_id
+ * @param  string $deadline
+ * @return array;
+ */
+function get_task_errors($con, $task_name, $project_id, $deadline)
+{
+    $errors = [];
+
+    if (!$task_name) {
+        $errors['task_name'] = "Поле надо заполнить";
+    } elseif (!check_length($task_name, 1, 128)) {
+        $errors['task_name'] = 'Количество символов должно быть не более 128';
+    }
+
+    if (!$project_id) {
+        $errors['project_id'] = 'Поле надо заполнить';
+    } elseif (!check_project_id($con, $project_id)) {
+        $errors['project_id'] = 'Такой проект не существует';
+    }
+
+    if ($deadline && !is_date_valid($deadline)) {
+        $errors['deadline'] = 'Неправильный формат даты';
+    } elseif ($deadline && !check_correct_date($deadline)) {
+        $errors['deadline'] = 'Дата должна быть больше или равна текущей';
+    }
+
+    return array_filter($errors);
+}
+
+/**
+ * Получение ссылки на файл полученный от пользователя
+ *
+ * @param  string $field - name
+ * @return string
+ */
+function get_file_url($field_name)
+{
+    if ($_FILES[$field_name]['name']) {
+        $tmp_name = $_FILES[$field_name]['tmp_name'];
+        $file_name = $_FILES[$field_name]['name'];
+        $file_name = uniqid() . '_' . $file_name;
+        $file_path = __DIR__ . '/uploads/';
+
+        move_uploaded_file($_FILES[$field_name]['tmp_name'], $file_path . $file_name);
+
+        return 'uploads/' . $file_name;
+    }
+
+    return null;
 }

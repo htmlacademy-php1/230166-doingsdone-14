@@ -2,20 +2,11 @@
     <section class="content__side">
         <h2 class="content__side-heading">Проекты</h2>
 
-        <nav class="main-navigation">
-            <ul class="main-navigation__list">
-                <?php foreach ($projects as $project) : ?>
-                <li class="main-navigation__list-item <?= $project['id'] === $project_id ? 'main-navigation__list-item--active' : ''; ?>">
-                    <a class="main-navigation__list-item-link" href="?project_id=<?= $project['id']; ?>">
-                        <?= esc($project['name']) ?>
-                    </a>
-                    <span class="main-navigation__list-item-count">
-                        <?= esc($project['count_tasks']); ?>
-                    </span>
-                </li>
-                <? endforeach; ?>
-            </ul>
-        </nav>
+        <?= include_template('main-nav.php', [
+                'project_id' => $project_id,
+                'projects' => $projects
+            ])
+        ?>
 
         <a class="button button--transparent button--plus content__side-button"
             href="pages/form-project.html" target="project_add">Добавить проект</a>
@@ -33,9 +24,9 @@
         <div class="tasks-controls">
             <nav class="tasks-switch">
                 <a href="/" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
-                <a href="/" class="tasks-switch__item">Повестка дня</a>
-                <a href="/" class="tasks-switch__item">Завтра</a>
-                <a href="/" class="tasks-switch__item">Просроченные</a>
+                <a href="?date=today" class="tasks-switch__item">Повестка дня</a>
+                <a href="?date=tomorrow" class="tasks-switch__item">Завтра</a>
+                <a href="?date=end" class="tasks-switch__item">Просроченные</a>
             </nav>
 
             <label class="checkbox">
@@ -47,15 +38,17 @@
 
         <table class="tasks">
             <?php foreach ($tasks as $task) : ?>
-            <?php if (!$show_complete_tasks && $task['is_ready']) : continue; endif; ?>
-            <tr class="tasks__item task <?= $task['is_ready'] ? 'task--completed' : ''; ?> <?= check_less_than_day($task['date']) ? 'task--important' : ''; ?>">
+            <?php if (!$show_complete_tasks && $task['is_complete']) : continue; endif; ?>
+            <tr class="tasks__item task
+                <?= $task['is_complete'] ? 'task--completed' : ''; ?>
+                <?= $task['deadline'] && get_hours($task['deadline']) <= 24 ? 'task--important' : ''; ?>">
                 <td class="task__select">
                     <label class="checkbox task__checkbox">
                         <input
                             class="checkbox__input visually-hidden task__checkbox"
                             type="checkbox"
                             value="1"
-                            <?= $task['is_ready'] ? 'checked' : ''; ?>
+                            <?= $task['is_complete'] ? 'checked' : ''; ?>
                         >
                         <span class="checkbox__text">
                             <?= esc($task['name']); ?>
@@ -64,13 +57,15 @@
                 </td>
 
                 <td class="task__file">
-                    <a class="download-link" href="#">
-                        <?= esc($task['file_url']); ?>
+                    <?php if ($task['file_url']) : ?>
+                    <a class="download-link" href="<?= $task['file_url'] ?>">
+                        Скачать файл
                     </a>
+                    <? endif; ?>
                 </td>
 
                 <td class="task__date">
-                    <?= esc($task['finish_date']); ?>
+                    <?= $task['deadline'] ? date('Y-m-d', strtotime(esc($task['deadline']))) : 'Без даты'; ?>
                 </td>
             </tr>
             <? endforeach; ?>

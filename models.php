@@ -37,7 +37,7 @@ function get_projects($con, $user_id)
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
-    show_error(mysqli_error($con));
+    show_error('get_projects' . mysqli_error($con));
 }
 
 /**
@@ -47,40 +47,29 @@ function get_projects($con, $user_id)
  * @param  int $user_id
  * @return array
  */
-function get_user_tasks($con, $user_id)
+function get_user_tasks($con, $user_id, $project_id = null)
 {
     $user_id = mysqli_real_escape_string($con, $user_id);
-    $sql = "SELECT * FROM task WHERE user_id = $user_id";
+
+    if ($project_id) {
+        $project_id = mysqli_real_escape_string($con, $project_id);
+        $sql = "SELECT * FROM task
+                    WHERE user_id = $user_id AND project_id = $project_id
+                    ORDER BY date_add";
+    } else {
+        $sql = "SELECT * FROM task
+                    WHERE user_id = $user_id
+                    ORDER BY date_add";
+    }
+
     $result = mysqli_query($con, $sql);
 
     if ($result) {
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
-    show_error(mysqli_error($con));
+    show_error('get_user_tasks ' . mysqli_error($con));
 }
-
-/**
- * получение списка из всех задач для одного пользователя
- *
- * @param  mysqli $con
- * @param  int $user_id
- * @return array
- */
-function get_project_user_tasks($con, $user_id, $project_id)
-{
-    $project_id = mysqli_real_escape_string($con, $project_id);
-    $user_id = mysqli_real_escape_string($con, $user_id);
-    $sql = "SELECT * FROM task WHERE user_id = $user_id AND project_id = $project_id";
-    $result = mysqli_query($con, $sql);
-
-    if ($result) {
-        return mysqli_fetch_all($result, MYSQLI_ASSOC);
-    }
-
-    show_error(mysqli_error($con));
-}
-
 
 /**
  * Проверка на существование проекта по id
@@ -105,7 +94,7 @@ function check_project_id($con, $project_id)
         else return false;
     }
 
-    show_error(mysqli_error($con));
+    show_error('check_project_id ' . mysqli_error($con));
 }
 
 /**
@@ -131,5 +120,23 @@ function check_user_id($con, $user_id)
         else return false;
     }
 
-    show_error(mysqli_error($con));
+    show_error('check_user_id ' . mysqli_error($con));
+}
+
+/**
+ * Добавление задачи
+ *
+ * @param  mysqli $con
+ * @param  array $values
+ * @return void
+ */
+function add_task($con, $values)
+{
+    $sql = "INSERT INTO task (name, file_url, deadline, project_id, user_id) VALUES (?, ?, ?, ?, ?)";
+    $stmt = db_get_prepare_stmt($con, $sql, $values);
+    $result = mysqli_stmt_execute($stmt);
+
+    if (!$result) {
+        show_error('add_task' . mysqli_error($con));
+    }
 }
