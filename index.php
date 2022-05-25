@@ -15,12 +15,11 @@ if ($project_id && !check_project_id($con, $project_id)) {
     show_error('Такой проект не существует');
 }
 
-// $filter = filter_input(INPUT_GET, 'date');
-
 $task_id = filter_input(INPUT_GET, 'task_id', FILTER_SANITIZE_NUMBER_INT);
 $task_check = filter_input(INPUT_GET, 'check', FILTER_SANITIZE_NUMBER_INT);
-$show_complete_tasks = filter_input(INPUT_GET, 'show_completed', FILTER_SANITIZE_NUMBER_INT);
-$search = trim(filter_input(INPUT_GET, 'search')) ?? '';
+$show_completed_tasks = filter_input(INPUT_GET, 'show_completed', FILTER_SANITIZE_NUMBER_INT);
+$search = trim(filter_input(INPUT_GET, 'search')) ?? null;
+$filter = filter_input(INPUT_GET, 'filter');
 
 if ($task_id && check_task_id($con, $task_id)) {
     if ($task_check) {
@@ -30,11 +29,11 @@ if ($task_id && check_task_id($con, $task_id)) {
     }
 }
 
-$tasks = get_user_tasks($con, $user_id, $project_id);
+$tasks = get_user_no_completed_tasks($con, $user_id, $project_id);
 $projects = get_projects($con, $user_id);
 
-if ($show_complete_tasks) {
-    $tasks = get_complete_tasks($con, $user_id, $project_id = null);
+if ($show_completed_tasks) {
+    $tasks = get_all_user_tasks($con, $user_id, $project_id = null);
 }
 
 if ($search) {
@@ -44,9 +43,11 @@ if ($search) {
 $content = include_template('main.php', [
     'projects' => $projects,
     'project_id' => $project_id,
+    'task_id' => $task_id ?? null,
+    'task_check' => $task_check ?? null,
     'tasks' => $tasks ?? null,
     'search' => $search,
-    'show_complete_tasks' => $show_complete_tasks,
+    'show_completed_tasks' => $show_completed_tasks,
     'is_complete' => $is_complete ?? null
 ]);
 

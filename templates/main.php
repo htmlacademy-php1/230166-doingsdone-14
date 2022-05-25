@@ -20,28 +20,40 @@
                 class="search-form__input"
                 type="text"
                 name="search"
-                value="<?= $show_complete_tasks ?>"
+                value=""
                 placeholder="Поиск по задачам"
-                <?= $show_complete_tasks ? 'checked' : ''; ?>
             >
             <input class="search-form__submit" type="submit" name="" value="Искать">
         </form>
 
         <div class="tasks-controls">
             <nav class="tasks-switch">
-                <a href="/" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
-                <a href="?filter=today" class="tasks-switch__item">Повестка дня</a>
-                <a href="?filter=tomorrow" class="tasks-switch__item">Завтра</a>
-                <a href="?filter=end" class="tasks-switch__item">Просроченные</a>
+                <a
+                    href="/"
+                    class="tasks-switch__item tasks-switch__item--active"
+                >Все задачи</a>
+                <a
+                    href="?filter=today&task_id=<?= $task_id ?>&check=<?= $task_check ?>&show_completed=<?= $show_completed_tasks ?>"
+                    class="tasks-switch__item"
+                >Повестка дня</a>
+                <a
+                    href="?filter=tomorrow&task_id=<?= $task_id ?>&check=<?= $task_check ?>&show_completed=<?= $show_completed_tasks ?>"
+                    class="tasks-switch__item"
+                >Завтра</a>
+                <a
+                    href="?filter=overdue&task_id=<?= $task_id ?>&check=<?= $task_check ?>&show_completed=<?= $show_completed_tasks ?>"
+                    class="tasks-switch__item"
+                >Просроченные</a>
             </nav>
 
             <label class="checkbox">
                 <!--добавить сюда атрибут "checked", если переменная $show_complete_tasks равна единице-->
                 <input
                     class="checkbox__input visually-hidden show_completed"
-                    type="checkbox" <?= $show_complete_tasks ? 'checked' : '' ?>
+                    type="checkbox"
                     name="show_completed"
                     value=""
+                    <?= $show_completed_tasks ? 'checked' : ''; ?>
                 >
                 <span class="checkbox__text">Показывать выполненные</span>
             </label>

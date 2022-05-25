@@ -47,18 +47,23 @@ function get_projects($con, $user_id)
  * @param  int $user_id
  * @return array
  */
-function get_user_tasks($con, $user_id, $project_id = null)
+function get_user_no_completed_tasks($con, $user_id, $project_id = null)
 {
     $user_id = mysqli_real_escape_string($con, $user_id);
 
     if ($project_id) {
         $project_id = mysqli_real_escape_string($con, $project_id);
         $sql = "SELECT * FROM task
-                    WHERE user_id = $user_id AND project_id = $project_id
+                    WHERE
+                        user_id = $user_id
+                        AND project_id = $project_id
+                        AND is_complete = 0
                     ORDER BY date_add";
     } else {
         $sql = "SELECT * FROM task
-                    WHERE user_id = $user_id
+                    WHERE
+                        user_id = $user_id
+                        AND is_complete = 0
                     ORDER BY date_add";
     }
 
@@ -78,7 +83,7 @@ function get_user_tasks($con, $user_id, $project_id = null)
  * @param  int $user_id
  * @return array
  */
-function get_complete_tasks($con, $user_id, $project_id = null)
+function get_all_user_tasks($con, $user_id, $project_id = null)
 {
     $user_id = mysqli_real_escape_string($con, $user_id);
 
@@ -88,12 +93,11 @@ function get_complete_tasks($con, $user_id, $project_id = null)
                     WHERE
                         user_id = $user_id
                         AND project_id = $project_id
-                        AND is_complete = 1
                     ORDER BY date_add";
     } else {
         $sql = "SELECT * FROM task
-                    WHERE user_id = $user_id
-                        AND is_complete = 1
+                    WHERE
+                        user_id = $user_id
                     ORDER BY date_add";
     }
 
