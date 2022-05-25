@@ -34,16 +34,16 @@ if ($task_id && $task_check) {
     remove_complete_task($con, $task_id);
 }
 
-if ($filter === 'today') {
-    $tasks = get_today_user_tasks($con, $user_id, $project_id);
-} elseif ($filter === 'tomorrow') {
-    $tasks = get_tomorrow_user_tasks($con, $user_id, $project_id);
-} elseif ($filter === 'overday') {
-    $tasks = get_overday_user_tasks($con, $user_id, $project_id);
-}
-
 if ($search) {
     $tasks = get_search_results($con, $search);
+}
+
+if ($filter === 'today') {
+    $tasks = get_today_tasks($tasks);
+} elseif ($filter === 'tomorrow') {
+    $tasks = get_tomorrow_tasks($tasks);
+} elseif ($filter === 'overday') {
+    $tasks = get_overday_tasks($tasks);
 }
 
 if (!$show_completed_tasks) {
