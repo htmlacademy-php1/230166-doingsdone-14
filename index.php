@@ -35,6 +35,10 @@ if ($task_id && check_task_id($con, $task_id)) {
 $tasks = get_user_tasks($con, $user_id, $project_id);
 $projects = get_projects($con, $user_id);
 
+if ($show_complete_tasks) {
+    $tasks = get_complete_tasks($con, $user_id, $project_id = null);
+}
+
 $search = trim(filter_input(INPUT_GET, 'search')) ?? '';
 
 if ($search) {

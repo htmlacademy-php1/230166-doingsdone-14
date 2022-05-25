@@ -20,7 +20,7 @@
                 class="search-form__input"
                 type="text"
                 name="search"
-                value=""
+                value="<?= $show_complete_tasks ?>"
                 placeholder="Поиск по задачам"
             >
             <input class="search-form__submit" type="submit" name="" value="Искать">

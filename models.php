@@ -72,6 +72,41 @@ function get_user_tasks($con, $user_id, $project_id = null)
 }
 
 /**
+ * получение списка из всех задач для одного пользователя
+ *
+ * @param  mysqli $con
+ * @param  int $user_id
+ * @return array
+ */
+function get_complete_tasks($con, $user_id, $project_id = null)
+{
+    $user_id = mysqli_real_escape_string($con, $user_id);
+
+    if ($project_id) {
+        $project_id = mysqli_real_escape_string($con, $project_id);
+        $sql = "SELECT * FROM task
+                    WHERE
+                        user_id = $user_id
+                        AND project_id = $project_id
+                        AND is_complete = 1
+                    ORDER BY date_add";
+    } else {
+        $sql = "SELECT * FROM task
+                    WHERE user_id = $user_id
+                        AND is_complete = 1
+                    ORDER BY date_add";
+    }
+
+    $result = mysqli_query($con, $sql);
+
+    if ($result) {
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+
+    show_error('get_user_tasks ' . mysqli_error($con));
+}
+
+/**
  * Получение пользователя по email
  *
  * @param mysqli $con Ресурс соединения
