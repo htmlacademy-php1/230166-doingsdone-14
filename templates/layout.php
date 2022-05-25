@@ -19,7 +19,7 @@
                 <a class="main-header__side-item button button--plus open-modal" href="add-task.php">Добавить задачу</a>
                 <div class="main-header__side-item user-menu">
                     <div class="user-menu__data">
-                        <p><?= $current_user['login'] ?></p>
+                        <p><?= $user['login'] ?></p>
                         <a href="logout.php">Выйти</a>
                     </div>
                 </div>

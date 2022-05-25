@@ -2,12 +2,12 @@
 
 require_once 'init.php';
 
-if (!$current_user || !check_user_id($con, $current_user['id'])) {
+if (!$user || !check_user_id($con, $user['id'])) {
     header('Location: quest.php');
     exit();
 }
 
-$current_user_id = $current_user['id'];
+$user_id = $user['id'];
 
 $project_id = filter_input(INPUT_GET, 'project_id');
 
@@ -17,8 +17,8 @@ if ($project_id && !check_project_id($con, $project_id)) {
 
 // $date = filter_input(INPUT_GET, 'date');
 
-$tasks = get_user_tasks($con, $current_user_id, $project_id);
-$projects = get_projects($con, $current_user_id);
+$tasks = get_user_tasks($con, $user_id, $project_id);
+$projects = get_projects($con, $user_id);
 
 $search = trim(filter_input(INPUT_GET, 'search')) ?? '';
 
@@ -36,7 +36,7 @@ $content = include_template('main.php', [
 
 $layout = include_template('layout.php', [
     'page_title' => 'Дела в порядке',
-    'current_user' => $current_user,
+    'user' => $user,
     'content' => $content
 ]);
 

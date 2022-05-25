@@ -2,13 +2,13 @@
 
 require_once 'init.php';
 
-if (!$current_user || !check_user_id($con, $current_user['id'])) {
+if (!$user || !check_user_id($con, $user['id'])) {
     header('Location: quest.php');
     exit();
 }
 
-$current_user_id = $current_user['id'];
-$projects = get_projects($con, $current_user_id);
+$user_id = $user['id'];
+$projects = get_projects($con, $user_id);
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (empty($errors)) {
-        add_project($con, $project_name, $current_user_id);
+        add_project($con, $project_name, $user_id);
         header('Location: index.php');
         exit();
     }
@@ -35,7 +35,7 @@ $content = include_template('form-project.php', [
 
 $layout = include_template('layout.php', [
     'page_title' => 'Добавление задачи',
-    'current_user' => $current_user,
+    'user' => $user,
     'content' => $content
 ]);
 

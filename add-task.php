@@ -2,14 +2,14 @@
 
 require_once 'init.php';
 
-if (!$current_user || !check_user_id($con, $current_user['id'])) {
+if (!$user || !check_user_id($con, $user['id'])) {
     header('Location: quest.php');
     exit();
 }
 
-$current_user_id = $current_user['id'];
-
-$projects = get_projects($con, $current_user_id);
+$user_id = $user['id'];
+$projects = get_projects($con, $user_id);
+$errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $task_name = trim(filter_input(INPUT_POST, 'task_name'));
@@ -20,12 +20,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $deadline = null;
     }
 
-    $errors = get_task_errors($con, $task_name, $project_id, $deadline);
+    if (!$task_name) {
+        $errors['task_name'] = 'Поле надо заполнить';
+    } elseif (!check_length($task_name, 1, 128)) {
+        $errors['task_name'] = 'Количество символов должно быть не более 128';
+    }
 
-    $file_url = get_file_url('file');
+    if (!$project_id) {
+        $errors['project_id'] = 'Поле надо заполнить';
+    } elseif (!check_project_id($con, $project_id)) {
+        $errors['project_id'] = 'Такой проект не существует';
+    }
+
+    if ($deadline && !is_date_valid($deadline)) {
+        $errors['deadline'] = 'Неправильный формат даты';
+    } elseif ($deadline && !check_correct_date($deadline)) {
+        $errors['deadline'] = 'Дата должна быть больше или равна текущей';
+    }
+
+    array_filter($errors);
+
+    if ($_FILES[$field_name]['name']) {
+        $tmp_name = $_FILES[$field_name]['tmp_name'];
+        $file_name = $_FILES[$field_name]['name'];
+        $file_name = uniqid() . '_' . $file_name;
+        $file_path = __DIR__ . '/uploads/';
+
+        move_uploaded_file($_FILES[$field_name]['tmp_name'], $file_path . $file_name);
+        $file_url = 'uploads/' . $file_name;
+    }
 
     if (empty($errors)) {
-        add_task($con, [$task_name, $file_url, $deadline, $project_id, $current_user_id]);
+        add_task($con, [$task_name, $file_url, $deadline, $project_id, $user_id]);
         header('Location: index.php');
         exit();
     }
@@ -41,7 +67,7 @@ $content = include_template('form-task.php', [
 
 $layout = include_template('layout.php', [
     'page_title' => 'Добавление задачи',
-    'current_user' => $current_user,
+    'user' => $user,
     'content' => $content
 ]);
 

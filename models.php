@@ -257,13 +257,13 @@ function add_user($con, $values)
  *
  * @param  mysqli $con
  * @param  array $project_name
- * @param  array $current_user_id
+ * @param  array $user_id
  * @return void
  */
-function add_project($con, $project_name, $current_user_id)
+function add_project($con, $project_name, $user_id)
 {
     $sql = "INSERT INTO project (name, user_id) VALUES (?, ?)";
-    $stmt = db_get_prepare_stmt($con, $sql, [$project_name, $current_user_id]);
+    $stmt = db_get_prepare_stmt($con, $sql, [$project_name, $user_id]);
     $result = mysqli_stmt_execute($stmt);
 
     if (!$result) {

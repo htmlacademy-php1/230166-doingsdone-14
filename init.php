@@ -8,7 +8,7 @@ require_once 'models.php';
 
 session_start();
 
-$current_user = $_SESSION['current_user'] ?? NULL;
+$user = $_SESSION['user'] ?? NULL;
 
 define('CACHE_DIR', basename(__DIR__ . DIRECTORY_SEPARATOR . 'cache'));
 define('UPLOAD_PATH', basename(__DIR__ . DIRECTORY_SEPARATOR . 'uploads'));
