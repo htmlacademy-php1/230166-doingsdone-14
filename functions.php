@@ -103,7 +103,6 @@ function get_user_no_completed_tasks($tasks)
     return $no_completed_tasks;
 }
 
-
 /**
  * Получение задач на повестке дня
  *
@@ -114,11 +113,13 @@ function get_user_no_completed_tasks($tasks)
 function get_today_tasks($tasks)
 {
     $result = [];
-    $current_date = time();
-    $today = strtotime("tomorrow 00:00:00");
+    $yesterday = strtotime('yesterday');
+    $midnight = strtotime('midnight');
 
     foreach($tasks as $task) {
-        if ($task['deadline'] > $current_date && $task['deadline'] < $today) {
+        $deadline = strtotime($task['deadline']);
+
+        if ($deadline > $yesterday && $deadline < $midnight) {
             $result[] = $task;
         }
     }
@@ -136,11 +137,13 @@ function get_today_tasks($tasks)
 function get_tomorrow_tasks($tasks)
 {
     $result = [];
-    $today = strtotime("tomorrow 00:00:00");
-    $tommorow = strtotime("tomorrow 29:59:59");
+    $midnight = strtotime('midnight');
+    $tommorow = strtotime('tomorrow');
 
     foreach($tasks as $task) {
-        if ($task['deadline'] > $today && $task['deadline'] <= $tommorow) {
+        $deadline = strtotime($task['deadline']);
+
+        if ($deadline > $midnight && $deadline < $tommorow) {
             $result[] = $task;
         }
     }
@@ -158,10 +161,12 @@ function get_tomorrow_tasks($tasks)
 function get_overday_tasks($tasks)
 {
     $result = [];
-    $current_date = time();
+    $yesterday = strtotime('yesterday');
 
     foreach($tasks as $task) {
-        if ($task['deadline'] < $current_date) {
+        $deadline = strtotime($task['deadline']);
+
+        if ($deadline < $yesterday) {
             $result[] = $task;
         }
     }
