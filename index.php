@@ -15,20 +15,18 @@ if ($project_id && !check_project_id($con, $project_id)) {
     show_error('Такой проект не существует');
 }
 
-// $date = filter_input(INPUT_GET, 'date');
-
+// $filter = filter_input(INPUT_GET, 'date');
 
 $task_id = filter_input(INPUT_GET, 'task_id', FILTER_SANITIZE_NUMBER_INT);
 $task_check = filter_input(INPUT_GET, 'check', FILTER_SANITIZE_NUMBER_INT);
-$show_complete_tasks = filter_input(INPUT_GET, 'show_complete', FILTER_SANITIZE_NUMBER_INT);
+$show_complete_tasks = filter_input(INPUT_GET, 'show_completed', FILTER_SANITIZE_NUMBER_INT);
+$search = trim(filter_input(INPUT_GET, 'search')) ?? '';
 
 if ($task_id && check_task_id($con, $task_id)) {
     if ($task_check) {
         complete_task($con, $task_id);
-        header('Location: index.php');
     } else {
         remove_complete_task($con, $task_id);
-        header('Location: index.php');
     }
 }
 
@@ -38,8 +36,6 @@ $projects = get_projects($con, $user_id);
 if ($show_complete_tasks) {
     $tasks = get_complete_tasks($con, $user_id, $project_id = null);
 }
-
-$search = trim(filter_input(INPUT_GET, 'search')) ?? '';
 
 if ($search) {
     $tasks = get_search_results($con, $search);

@@ -22,6 +22,7 @@
                 name="search"
                 value="<?= $show_complete_tasks ?>"
                 placeholder="Поиск по задачам"
+                <?= $show_complete_tasks ? 'checked' : ''; ?>
             >
             <input class="search-form__submit" type="submit" name="" value="Искать">
         </form>
