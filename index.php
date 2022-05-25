@@ -17,18 +17,10 @@ if ($project_id && !check_project_id($con, $project_id)) {
 
 // $date = filter_input(INPUT_GET, 'date');
 
-$tasks = get_user_tasks($con, $user_id, $project_id);
-$projects = get_projects($con, $user_id);
-
-$search = trim(filter_input(INPUT_GET, 'search')) ?? '';
-
-if ($search) {
-    $tasks = get_search_results($con, $search);
-}
-
 
 $task_id = filter_input(INPUT_GET, 'task_id', FILTER_SANITIZE_NUMBER_INT);
 $task_check = filter_input(INPUT_GET, 'check', FILTER_SANITIZE_NUMBER_INT);
+$show_complete_tasks = filter_input(INPUT_GET, 'show_complete', FILTER_SANITIZE_NUMBER_INT);
 
 if ($task_id && check_task_id($con, $task_id)) {
     if ($task_check) {
@@ -38,6 +30,15 @@ if ($task_id && check_task_id($con, $task_id)) {
         remove_complete_task($con, $task_id);
         header('Location: index.php');
     }
+}
+
+$tasks = get_user_tasks($con, $user_id, $project_id);
+$projects = get_projects($con, $user_id);
+
+$search = trim(filter_input(INPUT_GET, 'search')) ?? '';
+
+if ($search) {
+    $tasks = get_search_results($con, $search);
 }
 
 $content = include_template('main.php', [
