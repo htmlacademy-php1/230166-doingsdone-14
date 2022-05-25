@@ -83,3 +83,22 @@ function check_correct_date($date)
 
     return false;
 }
+
+/**
+ * Получение незавершенных задач
+ *
+ * @param  mixed $tasks
+ * @return void
+ */
+function get_user_no_completed_tasks($tasks)
+{
+    $no_completed_tasks = [];
+
+    foreach($tasks as $task) {
+        if ($task['is_completed']) {
+            $no_completed_tasks[] = $task;
+        }
+    }
+
+    return $no_completed_tasks;
+}

@@ -41,7 +41,7 @@
                     class="tasks-switch__item"
                 >Завтра</a>
                 <a
-                    href="?filter=overdue&task_id=<?= $task_id ?>&check=<?= $task_check ?>&show_completed=<?= $show_completed_tasks ?>"
+                    href="?filter=overday&task_id=<?= $task_id ?>&check=<?= $task_check ?>&show_completed=<?= $show_completed_tasks ?>"
                     class="tasks-switch__item"
                 >Просроченные</a>
             </nav>

@@ -47,43 +47,6 @@ function get_projects($con, $user_id)
  * @param  int $user_id
  * @return array
  */
-function get_user_no_completed_tasks($con, $user_id, $project_id = null)
-{
-    $user_id = mysqli_real_escape_string($con, $user_id);
-
-    if ($project_id) {
-        $project_id = mysqli_real_escape_string($con, $project_id);
-
-        $sql = "SELECT * FROM task
-                    WHERE
-                        user_id = $user_id
-                        AND project_id = $project_id
-                        AND is_complete = 0
-                    ORDER BY date_add";
-    } else {
-        $sql = "SELECT * FROM task
-                    WHERE
-                        user_id = $user_id
-                        AND is_complete = 0
-                    ORDER BY date_add";
-    }
-
-    $result = mysqli_query($con, $sql);
-
-    if ($result) {
-        return mysqli_fetch_all($result, MYSQLI_ASSOC);
-    }
-
-    show_error('get_user_no_completed_tasks ' . mysqli_error($con));
-}
-
-/**
- * получение списка из всех задач для одного пользователя
- *
- * @param  mysqli $con
- * @param  int $user_id
- * @return array
- */
 function get_all_user_tasks($con, $user_id, $project_id = null)
 {
     $user_id = mysqli_real_escape_string($con, $user_id);
@@ -137,6 +100,80 @@ function get_today_user_tasks($con, $user_id, $project_id = null)
                     WHERE
                         user_id = $user_id
                         AND date_add < DATE_SUB(NOW(), INTERVAL 1 DAY)
+                    ORDER BY date_add";
+    }
+
+    $result = mysqli_query($con, $sql);
+
+    if ($result) {
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+
+    show_error('get_today_user_tasks ' . mysqli_error($con));
+}
+
+/**
+ * получение списка из всех задач для одного пользователя
+ *
+ * @param  mysqli $con
+ * @param  int $user_id
+ * @return array
+ */
+function get_tomorrow_user_tasks($con, $user_id, $project_id = null)
+{
+    $user_id = mysqli_real_escape_string($con, $user_id);
+
+    if ($project_id) {
+        $project_id = mysqli_real_escape_string($con, $project_id);
+
+        $sql = "SELECT * FROM task
+                    WHERE
+                        user_id = $user_id
+                        AND project_id = $project_id
+                        AND date_add < DATE_SUB(NOW() + 60 * 60 * 24, INTERVAL 1 DAY)
+                    ORDER BY date_add";
+    } else {
+        $sql = "SELECT * FROM task
+                    WHERE
+                        user_id = $user_id
+                        AND date_add < DATE_SUB(NOW(), INTERVAL 1 DAY)
+                    ORDER BY date_add";
+    }
+
+    $result = mysqli_query($con, $sql);
+
+    if ($result) {
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+
+    show_error('get_today_user_tasks ' . mysqli_error($con));
+}
+
+/**
+ * получение списка из всех задач для одного пользователя
+ *
+ * @param  mysqli $con
+ * @param  int $user_id
+ * @return array
+ */
+function get_overday_user_tasks($con, $user_id, $project_id = null)
+{
+    $user_id = mysqli_real_escape_string($con, $user_id);
+
+    if ($project_id) {
+        $project_id = mysqli_real_escape_string($con, $project_id);
+
+        $sql = "SELECT * FROM task
+                    WHERE
+                        user_id = $user_id
+                        AND project_id = $project_id
+                        AND deadline < NOW()
+                    ORDER BY date_add";
+    } else {
+        $sql = "SELECT * FROM task
+                    WHERE
+                        user_id = $user_id
+                        AND deadline < NOW()
                     ORDER BY date_add";
     }
 
