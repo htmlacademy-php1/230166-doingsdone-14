@@ -30,7 +30,7 @@
             <nav class="tasks-switch">
                 <a
                     href="/"
-                    class="tasks-switch__item <?= $filter === 'today' ? 'tasks-switch__item--active' : ''; ?>"
+                    class="tasks-switch__item <?= !$filter ? 'tasks-switch__item--active' : ''; ?>"
                 >Все задачи</a>
                 <a
                     href="?filter=today&task_id=<?= $task_id ?>&check=<?= $task_check ?>&show_completed=<?= $show_completed_tasks ?>"
@@ -38,11 +38,11 @@
                 >Повестка дня</a>
                 <a
                     href="?filter=tomorrow&task_id=<?= $task_id ?>&check=<?= $task_check ?>&show_completed=<?= $show_completed_tasks ?>"
-                    class="tasks-switch__item <?= $filter === 'today' ? 'tasks-switch__item--active' : ''; ?>"
+                    class="tasks-switch__item <?= $filter === 'tomorrow' ? 'tasks-switch__item--active' : ''; ?>"
                 >Завтра</a>
                 <a
                     href="?filter=overday&task_id=<?= $task_id ?>&check=<?= $task_check ?>&show_completed=<?= $show_completed_tasks ?>"
-                    class="tasks-switch__item"
+                    class="tasks-switch__item <?= $filter === 'overday' ? 'tasks-switch__item--active' : ''; ?>"
                 >Просроченные</a>
             </nav>
 

@@ -40,13 +40,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     array_filter($errors);
 
-    if ($_FILES[$field_name]['name']) {
-        $tmp_name = $_FILES[$field_name]['tmp_name'];
-        $file_name = $_FILES[$field_name]['name'];
+    if ($_FILES['file']['name']) {
+        $tmp_name = $_FILES['file']['tmp_name'];
+        $file_name = $_FILES['file']['name'];
         $file_name = uniqid() . '_' . $file_name;
         $file_path = __DIR__ . '/uploads/';
 
-        move_uploaded_file($_FILES[$field_name]['tmp_name'], $file_path . $file_name);
+        move_uploaded_file($_FILES['file']['tmp_name'], $file_path . $file_name);
         $file_url = 'uploads/' . $file_name;
     }
 
