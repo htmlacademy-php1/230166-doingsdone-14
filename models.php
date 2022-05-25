@@ -37,7 +37,7 @@ function get_projects($con, $user_id)
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
-    show_error('get_projects' . mysqli_error($con));
+    show_error('get_projects ' . mysqli_error($con));
 }
 
 /**
@@ -213,7 +213,32 @@ function check_project_name($con, $project_name)
         return false;
     }
 
-    show_error('check_user_email ' . mysqli_error($con));
+    show_error('check_project_name ' . mysqli_error($con));
+}
+
+/**
+ * Проверка на существование задачи по id
+ *
+ * @param  mysqli $con
+ * @param  int $task_id
+ * @return bool
+ */
+function check_task_id($con, $task_id)
+{
+    $task_id = mysqli_real_escape_string($con, $task_id);
+    $sql = "SELECT id FROM task WHERE id = $task_id";
+    $result = mysqli_query($con, $sql);
+
+    if ($result) {
+        $task_id = mysqli_fetch_assoc($result);
+
+        if ($task_id) {
+            return true;
+        }
+        return false;
+    }
+
+    show_error('check_task_id ' . mysqli_error($con));
 }
 
 /**
@@ -230,7 +255,7 @@ function add_task($con, $values)
     $result = mysqli_stmt_execute($stmt);
 
     if (!$result) {
-        show_error('add_task' . mysqli_error($con));
+        show_error('add_task ' . mysqli_error($con));
     }
 }
 
@@ -248,7 +273,7 @@ function add_user($con, $values)
     $result = mysqli_stmt_execute($stmt);
 
     if (!$result) {
-        show_error('add_user' . mysqli_error($con));
+        show_error('add_user ' . mysqli_error($con));
     }
 }
 
@@ -267,6 +292,44 @@ function add_project($con, $project_name, $user_id)
     $result = mysqli_stmt_execute($stmt);
 
     if (!$result) {
-        show_error('add_user' . mysqli_error($con));
+        show_error('add_project ' . mysqli_error($con));
+    }
+}
+
+/**
+ * Отмечает что задача выполнена
+ *
+ * @param  mysqli $con
+ * @param  array $project_name
+ * @param  array $user_id
+ * @return void
+ */
+function complete_task($con, $task_id)
+{
+    $task_id = mysqli_real_escape_string($con, $task_id);
+    $sql = "UPDATE task SET is_complete = 1 WHERE id = $task_id";
+    $result = mysqli_query($con, $sql);
+
+    if (!$result) {
+        show_error('complete_task ' . mysqli_error($con));
+    }
+}
+
+/**
+ * Отмечает что задача не выполнена
+ *
+ * @param  mysqli $con
+ * @param  array $project_name
+ * @param  array $user_id
+ * @return void
+ */
+function remove_complete_task($con, $task_id)
+{
+    $task_id = mysqli_real_escape_string($con, $task_id);
+    $sql = "UPDATE task SET is_complete = 0 WHERE id = $task_id";
+    $result = mysqli_query($con, $sql);
+
+    if (!$result) {
+        show_error('complete_task ' . mysqli_error($con));
     }
 }

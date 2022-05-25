@@ -26,12 +26,27 @@ if ($search) {
     $tasks = get_search_results($con, $search);
 }
 
+
+$task_id = filter_input(INPUT_GET, 'task_id', FILTER_SANITIZE_NUMBER_INT);
+$task_check = filter_input(INPUT_GET, 'check', FILTER_SANITIZE_NUMBER_INT);
+
+if ($task_id && check_task_id($con, $task_id)) {
+    if ($task_check) {
+        complete_task($con, $task_id);
+        header('Location: index.php');
+    } else {
+        remove_complete_task($con, $task_id);
+        header('Location: index.php');
+    }
+}
+
 $content = include_template('main.php', [
     'projects' => $projects,
     'project_id' => $project_id,
     'tasks' => $tasks ?? null,
     'search' => $search,
-    'show_complete_tasks' => $show_complete_tasks
+    'show_complete_tasks' => $show_complete_tasks,
+    'is_complete' => $is_complete ?? null
 ]);
 
 $layout = include_template('layout.php', [

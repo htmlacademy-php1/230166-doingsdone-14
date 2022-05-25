@@ -29,14 +29,19 @@
         <div class="tasks-controls">
             <nav class="tasks-switch">
                 <a href="/" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
-                <a href="?date=today" class="tasks-switch__item">Повестка дня</a>
-                <a href="?date=tomorrow" class="tasks-switch__item">Завтра</a>
-                <a href="?date=end" class="tasks-switch__item">Просроченные</a>
+                <a href="?filter=today" class="tasks-switch__item">Повестка дня</a>
+                <a href="?filter=tomorrow" class="tasks-switch__item">Завтра</a>
+                <a href="?filter=end" class="tasks-switch__item">Просроченные</a>
             </nav>
 
             <label class="checkbox">
                 <!--добавить сюда атрибут "checked", если переменная $show_complete_tasks равна единице-->
-                <input class="checkbox__input visually-hidden show_completed" type="checkbox" <?= $show_complete_tasks ? 'checked' : '' ?>>
+                <input
+                    class="checkbox__input visually-hidden show_completed"
+                    type="checkbox" <?= $show_complete_tasks ? 'checked' : '' ?>
+                    name="show_completed"
+                    value=""
+                >
                 <span class="checkbox__text">Показывать выполненные</span>
             </label>
         </div>
@@ -46,7 +51,7 @@
             <p>Ничего не найдено по вашему запросу</p>
             <? endif; ?>
             <?php foreach ($tasks as $task) : ?>
-            <?php if (!$show_complete_tasks && $task['is_complete']) : continue; endif; ?>
+
             <tr class="tasks__item task
                 <?= $task['is_complete'] ? 'task--completed' : ''; ?>
                 <?= $task['deadline'] && get_hours($task['deadline']) <= 24 ? 'task--important' : ''; ?>">
@@ -55,7 +60,8 @@
                         <input
                             class="checkbox__input visually-hidden task__checkbox"
                             type="checkbox"
-                            value="1"
+                            name="is_complete"
+                            value="<?= $task['id']; ?>"
                             <?= $task['is_complete'] ? 'checked' : ''; ?>
                         >
                         <span class="checkbox__text">
