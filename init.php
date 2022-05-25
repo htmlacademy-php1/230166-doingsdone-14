@@ -6,6 +6,13 @@ require_once 'helpers.php';
 require_once 'functions.php';
 require_once 'models.php';
 
+session_start();
+
+$current_user = $_SESSION['current_user'] ?? NULL;
+
+define('CACHE_DIR', basename(__DIR__ . DIRECTORY_SEPARATOR . 'cache'));
+define('UPLOAD_PATH', basename(__DIR__ . DIRECTORY_SEPARATOR . 'uploads'));
+
 $db_cfg = array_values($db_cfg);
 $con = mysqli_connect(...$db_cfg);
 

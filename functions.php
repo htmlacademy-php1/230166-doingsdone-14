@@ -163,14 +163,41 @@ function get_register_errors($con, $email, $password, $login)
 
     if (!$password) {
         $errors['password'] = 'Поле надо заполнить';
-    } elseif (!check_length($password, 6, 20)) {
-        $errors['password'] = 'Пароль должен состоять минимум из 6 символов';
+    } elseif (!check_length($password, 1, 20)) {
+        $errors['password'] = 'Пароль должен быть не более 20 символов';
     }
 
     if (!$login) {
         $errors['login'] = 'Поле надо заполнить';
     } elseif (!check_length($login, 1, 255)) {
         $errors['login'] = 'Количество символов должно быть не более 255';
+    }
+
+    return array_filter($errors);
+}
+
+/**
+ * Валидация формы для входа пользователя
+ *
+ * @param  mysqli $con
+ * @param  string $email
+ * @param  string $password
+ * @return array
+*/
+function get_login_errors($con, $email, $password)
+{
+    $errors = [];
+
+    if (!$email) {
+        $errors['email'] = 'Поле надо заполнить';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Неправильный формат почты';
+    } elseif (!check_user_email($con, $email)) {
+        $errors['email'] = 'Пользователь с такой почтой не зарегистрирован';
+    }
+
+    if (!$password) {
+        $errors['password'] = 'Поле надо заполнить';
     }
 
     return array_filter($errors);

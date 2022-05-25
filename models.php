@@ -72,6 +72,26 @@ function get_user_tasks($con, $user_id, $project_id = null)
 }
 
 /**
+ * Получение пользователя по email
+ *
+ * @param mysqli $con Ресурс соединения
+ * @param string $email почта пользователя
+ * @return int
+*/
+function get_сurrent_user($con, $email)
+{
+    $email = mysqli_real_escape_string($con, $email);
+    $sql = "SELECT * FROM user WHERE email = '$email'";
+    $result = mysqli_query($con, $sql);
+
+    if ($result) {
+        return mysqli_fetch_assoc($result);
+    }
+
+    show_error('get_сurrent_user ' . mysqli_error($con));
+}
+
+/**
  * Проверка на существование проекта по id
  *
  * @param  mysqli $con
@@ -124,24 +144,6 @@ function check_user_id($con, $user_id)
 }
 
 /**
- * Добавление задачи
- *
- * @param  mysqli $con
- * @param  array $values
- * @return void
- */
-function add_task($con, $values)
-{
-    $sql = "INSERT INTO task (name, file_url, deadline, project_id, user_id) VALUES (?, ?, ?, ?, ?)";
-    $stmt = db_get_prepare_stmt($con, $sql, $values);
-    $result = mysqli_stmt_execute($stmt);
-
-    if (!$result) {
-        show_error('add_task' . mysqli_error($con));
-    }
-}
-
-/**
  * Проверка email
  *
  * @param  mysqli $con
@@ -164,6 +166,24 @@ function check_user_email($con, $email)
     }
 
     show_error('check_user_email ' . mysqli_error($con));
+}
+
+/**
+ * Добавление задачи
+ *
+ * @param  mysqli $con
+ * @param  array $values
+ * @return void
+ */
+function add_task($con, $values)
+{
+    $sql = "INSERT INTO task (name, file_url, deadline, project_id, user_id) VALUES (?, ?, ?, ?, ?)";
+    $stmt = db_get_prepare_stmt($con, $sql, $values);
+    $result = mysqli_stmt_execute($stmt);
+
+    if (!$result) {
+        show_error('add_task' . mysqli_error($con));
+    }
 }
 
 /**
