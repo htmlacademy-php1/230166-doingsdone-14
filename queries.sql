@@ -1,7 +1,7 @@
 INSERT INTO user (login, email, password)
   VALUES
-    ('Константин', 'email1@email.com', 'password1'),
-    ('Эльвира', 'email2@email.com', 'password2');
+    ('Константин', 'email@email.com', '$2y$10$zfMssWTVc6cqOKYYZvh5Med7QJT0ADMebKf2pKxDKPLOwoAcpMsAS'),
+    ('Эльвира', 'email2@email.com', 'pass2');
 
 INSERT INTO project (name, user_id)
   VALUES

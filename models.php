@@ -92,6 +92,29 @@ function get_сurrent_user($con, $email)
 }
 
 /**
+ * Получение задач по поиску
+ *
+ * @param mysqli $con Ресурс соединения
+ * @param string $search хэштег или строка поиска
+ * @return array
+*/
+function get_search_results($con, $search)
+{
+    $sql = "SELECT * FROM task
+            WHERE MATCH(name) AGAINST(?)
+            ORDER BY p.date_add";
+    $stmt = db_get_prepare_stmt($con, $sql, [$search]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($result) {
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+
+    show_error('get_search_results ' . mysqli_error($con));
+}
+
+/**
  * Проверка на существование проекта по id
  *
  * @param  mysqli $con

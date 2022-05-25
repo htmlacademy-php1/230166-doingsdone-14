@@ -3,7 +3,7 @@
 require_once 'init.php';
 
 if (!$current_user || !check_user_id($con, $current_user['id'])) {
-    header('Location: index.php');
+    header('Location: quest.php');
     exit();
 }
 
