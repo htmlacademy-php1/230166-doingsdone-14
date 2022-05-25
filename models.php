@@ -102,7 +102,7 @@ function get_search_results($con, $search)
 {
     $sql = "SELECT * FROM task
             WHERE MATCH(name) AGAINST(?)
-            ORDER BY p.date_add";
+            ORDER BY date_add";
     $stmt = db_get_prepare_stmt($con, $sql, [$search]);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
@@ -192,6 +192,31 @@ function check_user_email($con, $email)
 }
 
 /**
+ * Проверка на существование проекта
+ *
+ * @param  mysqli $con
+ * @param  string $project_name
+ * @return bool
+ */
+function check_project_name($con, $project_name)
+{
+    $project_name = mysqli_real_escape_string($con, $project_name);
+    $sql = "SELECT name FROM project WHERE name = '$project_name'";
+    $result = mysqli_query($con, $sql);
+
+    if ($result) {
+        $project_name = mysqli_fetch_assoc($result);
+
+        if ($project_name) {
+            return true;
+        }
+        return false;
+    }
+
+    show_error('check_user_email ' . mysqli_error($con));
+}
+
+/**
  * Добавление задачи
  *
  * @param  mysqli $con
@@ -220,6 +245,25 @@ function add_user($con, $values)
 {
     $sql = "INSERT INTO user (email, password, login) VALUES (?, ?, ?)";
     $stmt = db_get_prepare_stmt($con, $sql, $values);
+    $result = mysqli_stmt_execute($stmt);
+
+    if (!$result) {
+        show_error('add_user' . mysqli_error($con));
+    }
+}
+
+/**
+ * Добавление проекта
+ *
+ * @param  mysqli $con
+ * @param  array $project_name
+ * @param  array $current_user_id
+ * @return void
+ */
+function add_project($con, $project_name, $current_user_id)
+{
+    $sql = "INSERT INTO project (name, user_id) VALUES (?, ?)";
+    $stmt = db_get_prepare_stmt($con, $sql, [$project_name, $current_user_id]);
     $result = mysqli_stmt_execute($stmt);
 
     if (!$result) {

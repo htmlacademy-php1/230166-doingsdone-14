@@ -30,6 +30,7 @@ $content = include_template('main.php', [
     'projects' => $projects,
     'project_id' => $project_id,
     'tasks' => $tasks ?? null,
+    'search' => $search,
     'show_complete_tasks' => $show_complete_tasks
 ]);
 

@@ -54,7 +54,7 @@
                     type="text"
                     name="deadline"
                     id="date"
-                    value="<?= $deadline ? esc($deadline) : null; ?>"
+                    value="<?= esc($deadline); ?>"
                     placeholder="Введите дату в формате ГГГГ-ММ-ДД"
                 >
                 <?php if (isset($errors['deadline'])) : ?>
