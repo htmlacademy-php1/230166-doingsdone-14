@@ -95,7 +95,7 @@ function get_user_no_completed_tasks($tasks)
     $no_completed_tasks = [];
 
     foreach($tasks as $task) {
-        if ($task['is_completed']) {
+        if (!$task['is_complete']) {
             $no_completed_tasks[] = $task;
         }
     }

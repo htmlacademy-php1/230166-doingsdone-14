@@ -57,6 +57,7 @@ $content = include_template('main.php', [
     'task_check' => $task_check ?? null,
     'tasks' => $tasks ?? null,
     'search' => $search,
+    'filter' => $filter ?? null,
     'show_completed_tasks' => $show_completed_tasks,
     'is_complete' => $is_complete ?? null
 ]);
