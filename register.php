@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         $password = password_hash($password, PASSWORD_DEFAULT);
 
-        add_user($con, [$email, $password, $login]);
+        add_user($con, $email, $password, $login);
 
         header('Location: auth.php');
         exit();

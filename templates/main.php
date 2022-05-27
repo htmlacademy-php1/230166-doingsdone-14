@@ -102,5 +102,7 @@
             </tr>
             <?php endforeach; ?>
         </table>
+
+        <!-- <a href="mail.php">Mail</a> -->
     </main>
 </div>

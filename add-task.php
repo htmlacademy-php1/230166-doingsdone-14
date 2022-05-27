@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($deadline && !is_date_valid($deadline)) {
         $errors['deadline'] = 'Неправильный формат даты';
-    } elseif ($deadline && $deadline < date('Y-m-d')) {
+    } elseif ($deadline && !check_correct_date($deadline)) {
         $errors['deadline'] = 'Дата должна быть больше или равна текущей';
     }
 
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        add_task($con, [$task_name, $file_url, $deadline, $project_id, $user_id]);
+        add_task($con, $task_name, $file_url, $deadline, $project_id, $user_id);
 
         header('Location: index.php');
         exit();

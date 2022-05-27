@@ -17,7 +17,11 @@
             </a>
 
             <div class="main-header__side">
-                <a class="main-header__side-item button button--transparent" href="auth.php">Войти</a>
+                <?php if ($_SERVER['REQUEST_URI'] === '/register.php') : ?>
+                    <a class="main-header__side-item button button--transparent" href="auth.php">Войти</a>
+                <?php else : ?>
+                    <a class="main-header__side-item button button--transparent" href="register.php">Зарегистрироваться</a>
+                <?php endif; ?>
             </div>
         </header>
 

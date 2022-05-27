@@ -29,6 +29,17 @@ function get_hours($date)
 }
 
 /**
+ * проверка даты. Дата должна быть больше или роавна текущей в формате Y-m-d
+ *
+ * @param  string $date
+ * @return bool
+ */
+function check_correct_date($date)
+{
+    return date('Y-m-d', strtotime($date)) >= date('Y-m-d');
+}
+
+/**
  * Проверяет количество символов в сообщении на максимальное и минимальное значение,
  * возвращает true или false
  *
@@ -37,7 +48,7 @@ function get_hours($date)
  * @param  int $max - максимальное допустимое количество символов
  * @return bool
  */
-function check_length_of_string_($string, $min, $max)
+function check_length_of_string($string, $min, $max)
 {
     if ($string) {
         $len = strlen($string);

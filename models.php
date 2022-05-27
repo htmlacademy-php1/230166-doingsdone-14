@@ -17,7 +17,7 @@ function show_error($error)
         $page_content = include_template('error.php', ['error' => $error]);
     }
 
-    exit($content);
+    exit();
 }
 
 /**
@@ -125,6 +125,39 @@ function get_search_results($con, $search)
 }
 
 /**
+ * Функция принимает дату и ищет записи в таблице пользователей,
+ * таблица пользователей объединается с таблицей задач и выводит список пользователей,
+ * у которых есть невыполненные задачи, и список задач, где дата выполнения задачи ровна принимаемой дате
+ *
+ * @param mysqli $con Ресурс соединения
+ * @param string $date дата в формате Y-m-d
+ * @return array
+*/
+function get_users_for_mailing($con, $date)
+{
+    $sql = "SELECT u.id, u.email, u.login FROM user u
+            JOIN task t ON t.user_id = u.id
+            WHERE
+                DATE_FORMAT(t.deadline, '%Y-%m-%d') = '$date'
+                AND t.is_complete = 0";
+    $result = mysqli_query($con, $sql);
+
+    if ($result) {
+        $users = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $result = [];
+
+        foreach ($users as $user) {
+            $user['tasks'] = get_user_tasks($con, $user['id']);
+            $result[] = $user;
+        }
+
+        return $result;
+    }
+
+    show_error('get_users_for_mailing ' . mysqli_error($con));
+}
+
+/**
  * Функция принимает id проекта и ищет запись с таким же id в таблице проектов,
  * если находит возвращает массив с id, или пустой массив, который приводит к булеву типу
  *
@@ -149,8 +182,8 @@ function check_project_id($con, $project_id)
  * Функция принимает id пользователя и ищет запись с таким же id в таблице пользователей,
  * если находит возвращает массив с id, или пустой массив, который приводит к булеву типу
  *
- * @param  mysqli $con
- * @param  int $project_id
+ * @param  mysqli $con Ресурс соединения
+ * @param  int $project_id - id проекта
  * @return bool
  */
 function check_user_id($con, $user_id)
@@ -170,7 +203,7 @@ function check_user_id($con, $user_id)
  * Функция принимает email пользователя и ищет запись с таким же email в таблице пользователей,
  * если находит возвращает массив с email, или пустой массив, который приводит к булеву типу
  *
- * @param  mysqli $con
+ * @param  mysqli $con Ресурс соединения
  * @param  string $email
  * @return bool
  */
@@ -191,8 +224,8 @@ function check_user_email($con, $email)
  * Функция принимает название проекта и ищет запись в таблице проектов, если находит
  * возвращает массив с названием, или пустой массив, который приводит к булеву типу
  *
- * @param  mysqli $con
- * @param  string $project_name
+ * @param  mysqli $con Ресурс соединения
+ * @param  string $project_name - название проекта
  * @return bool
  */
 function check_project_name($con, $project_name)
@@ -212,8 +245,8 @@ function check_project_name($con, $project_name)
  * Функция принимает название id задачи и ищет запись в таблице задач, если запись есть
  * возвращает массив с id, или пустой массив, который приводит к булеву типу
  *
- * @param  mysqli $con
- * @param  int $task_id
+ * @param  mysqli $con Ресурс соединения
+ * @param  int $task_id - id задачи
  * @return bool
  */
 function check_task_id($con, $task_id)
@@ -233,14 +266,18 @@ function check_task_id($con, $task_id)
  * Функция принимает массив с полученными данными от пользвателя и добавляет новую задачу в БД
  * через подставленные выражения для защиты от XSS атак или возвращает ошибку
  *
- * @param  mysqli $con
- * @param  array $values
+ * @param  mysqli $con Ресурс соединения
+ * @param  string $task_name - название задачи
+ * @param  string $file_url - путь для файла
+ * @param  string $deadline - срок выполнения
+ * @param  int $project_id - id проекта
+ * @param  int $user_id - id пользователя
  * @return void
  */
-function add_task($con, $values)
+function add_task($con, $task_name, $file_url, $deadline, $project_id, $user_id)
 {
     $sql = "INSERT INTO task (name, file_url, deadline, project_id, user_id) VALUES (?, ?, ?, ?, ?)";
-    $stmt = db_get_prepare_stmt($con, $sql, $values);
+    $stmt = db_get_prepare_stmt($con, $sql, [$task_name, $file_url, $deadline, $project_id, $user_id]);
     $result = mysqli_stmt_execute($stmt);
 
     if (!$result) {
@@ -253,13 +290,15 @@ function add_task($con, $values)
  * через подставленные выражения для защиты от XSS атак или возвращает ошибку
  *
  * @param  mysqli $con
- * @param  array $values - массив с email, password, login
+ * @param  string $email
+ * @param  string $password
+ * @param  string $login
  * @return void
  */
-function add_user($con, $values)
+function add_user($con, $email, $password, $login)
 {
     $sql = "INSERT INTO user (email, password, login) VALUES (?, ?, ?)";
-    $stmt = db_get_prepare_stmt($con, $sql, $values);
+    $stmt = db_get_prepare_stmt($con, $sql, [$email, $password, $login]);
     $result = mysqli_stmt_execute($stmt);
 
     if (!$result) {
