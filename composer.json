@@ -1,0 +1,9 @@
+{
+    "name": "mrp/doingsdone",
+    "description": "Учебные проект",
+    "license": "MIT",
+    "require": {
+        "swiftmailer/swiftmailer": "^6.3",
+        "symfony/mailer": "^6.0"
+    }
+}

@@ -25,7 +25,7 @@
                 >
                 <?php if (isset($errors['project_name'])) : ?>
                     <p class="form__message"><?= esc($errors['project_name']); ?></p>
-                <? endif; ?>
+                <?php endif; ?>
             </div>
 
             <div class="form__row form__row--controls">

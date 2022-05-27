@@ -12,6 +12,7 @@
     <main class="content__main">
         <h2 class="content__main-heading">Добавление задачи</h2>
 
+        <?php if ($projects) : ?>
         <form class="form" action="add-task.php" method="post" autocomplete="off" enctype="multipart/form-data">
             <div class="form__row">
                 <label class="form__label" for="name">Название <sup>*</sup></label>
@@ -25,7 +26,7 @@
                 >
                 <?php if (isset($errors['task_name'])) : ?>
                     <p class="form__message"><?= esc($errors['task_name']); ?></p>
-                <? endif; ?>
+                <?php endif; ?>
             </div>
 
             <div class="form__row">
@@ -40,11 +41,11 @@
                     <option value="<?= esc($project['id']); ?>">
                         <?= esc($project['name']); ?>
                     </option>
-                    <? endforeach; ?>
+                    <?php endforeach; ?>
                 </select>
                 <?php if (isset($errors['project_id'])) : ?>
                     <p class="form__message"><?= esc($errors['project_id']); ?></p>
-                <? endif; ?>
+                <?php endif; ?>
             </div>
 
             <div class="form__row">
@@ -59,7 +60,7 @@
                 >
                 <?php if (isset($errors['deadline'])) : ?>
                     <p class="form__message"><?= esc($errors['deadline']); ?></p>
-                <? endif; ?>
+                <?php endif; ?>
             </div>
 
             <div class="form__row">
@@ -83,5 +84,9 @@
                 <input class="button" type="submit" name="" value="Добавить">
             </div>
         </form>
+        <?php else : ?>
+            <p>Надо сначала добавить проект, в который будут добавляться задачи. Например "Домашние дела".</p>
+            <a class="button button--transparent button--plus content__side-button" href="add-project.php">Добавить проект</a>
+        <?php endif; ?>
     </main>
 </div>

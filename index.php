@@ -22,7 +22,7 @@ $search = trim(filter_input(INPUT_GET, 'search')) ?? null;
 $filter = filter_input(INPUT_GET, 'filter');
 
 $projects = get_projects($con, $user_id);
-$tasks = get_all_user_tasks($con, $user_id, $project_id = null);
+$tasks = get_user_tasks($con, $user_id, $project_id = null);
 
 if ($task_id && !check_task_id($con, $task_id)) {
     show_error('Такой задачи не существует');
@@ -30,8 +30,10 @@ if ($task_id && !check_task_id($con, $task_id)) {
 
 if ($task_id && $task_check) {
     complete_task($con, $task_id);
+    header('Location: ' . $_SERVER['HTTP_REFERER']);
 } elseif ($task_id && !$task_check) {
     remove_complete_task($con, $task_id);
+    header('Location: ' . $_SERVER['HTTP_REFERER']);
 }
 
 if ($search) {

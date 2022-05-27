@@ -2,11 +2,12 @@
 
 require_once 'init.php';
 
-$errors = [];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim(filter_input(INPUT_POST, 'email'));
     $password = trim(filter_input(INPUT_POST, 'password'));
+    $errors = [];
+
 
     if (!$email) {
         $errors['email'] = 'Поле надо заполнить';
@@ -23,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     array_filter($errors);
 
     $user = get_сurrent_user($con, $email);
+    var_dump($user);
 
     if (empty($errors) && $user) {
         if (password_verify($password, $user['password'])) {

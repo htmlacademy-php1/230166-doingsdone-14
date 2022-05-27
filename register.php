@@ -4,7 +4,7 @@ require_once 'init.php';
 
 $errors = [];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim(filter_input(INPUT_POST, 'email'));
     $password = trim(filter_input(INPUT_POST, 'password'));
     $login = trim(filter_input(INPUT_POST, 'login'));
@@ -19,13 +19,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (!$password) {
         $errors['password'] = 'Поле надо заполнить';
-    } elseif (!check_length($password, 1, 20)) {
+    } elseif (!check_length_of_string($password, 1, 20)) {
         $errors['password'] = 'Пароль должен быть не более 20 символов';
     }
 
     if (!$login) {
         $errors['login'] = 'Поле надо заполнить';
-    } elseif (!check_length($login, 1, 255)) {
+    } elseif (!check_length_of_string($login, 1, 255)) {
         $errors['login'] = 'Количество символов должно быть не более 255';
     }
 
@@ -33,7 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (empty($errors)) {
         $password = password_hash($password, PASSWORD_DEFAULT);
-        add_user($con, [$email, $password, $login]);
+
+        add_user($con, $email, $password, $login);
+
         header('Location: auth.php');
         exit();
     }

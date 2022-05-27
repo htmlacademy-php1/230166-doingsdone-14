@@ -11,7 +11,7 @@ $user_id = $user['id'];
 $projects = get_projects($con, $user_id);
 $errors = [];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $project_name = trim(filter_input(INPUT_POST, 'project_name'));
 
     if (!$project_name) {

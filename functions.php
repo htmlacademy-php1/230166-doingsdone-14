@@ -1,30 +1,10 @@
 <?php
 
 /**
- * Подсчёт количества задач у каждого из проектов
+ * Защита от XSS атак, заменяет специальные символы на безопасные
  *
- * @param  array $tasks
- * @param  string $project
- * @return int
- */
-function count_tasks_in_project($tasks, $project)
-{
-    $count = 0;
-
-    foreach ($tasks as $task) {
-        if ($task['project'] == $project) {
-            $count++;
-        }
-    }
-
-    return $count;
-}
-
-/**
- * Защита от XSS атак
- *
- * @param  string $string
- * @return string
+ * @param  string $string - Конвертируемая строка
+ * @return string - отконвертированная строка
  */
 function esc($string)
 {
@@ -32,10 +12,12 @@ function esc($string)
 }
 
 /**
- *  Полчение даты в часах
+ *  Функция преобразует текстовое представление даты на английском языке
+ *  в метку времени Unix и возвращает разницу от текущего времени в часах,
+ *  округленные в меньшую сторону
  *
- * @param  mixed $date
- * @return int
+ * @param  string $date - дата на английском языке
+ * @return int - Количество часов
  */
 function get_hours($date)
 {
@@ -47,48 +29,44 @@ function get_hours($date)
 }
 
 /**
- * Прверяет количество символов в сообщении, максимальное и минимальное значение,
- * возвращает сообщение об ошибке
+ * проверка даты. Дата должна быть больше или роавна текущей в формате Y-m-d
  *
- * @param int $id категория, которую ввел пользователь в форму
- * @param array $allowed_list Список существующих категорий
- * @return string Текст сообщения об ошибке
- */
-function check_length($value, $min, $max)
-{
-    if ($value) {
-        $len = strlen($value);
-        if ($len >= $min or $len <= $max) {
-            return true;
-        }
-    }
-
-    return null;
-}
-
-/**
- * Проверка дата больше или равна текущей
- *
- * @param  mixed $date
- * @return void
+ * @param  string $date
+ * @return bool
  */
 function check_correct_date($date)
 {
-    $current_date = time();
-    $date = strtotime($date);
+    return date('Y-m-d', strtotime($date)) >= date('Y-m-d');
+}
 
-    if ($date >= $current_date) {
-        return true;
+/**
+ * Проверяет количество символов в сообщении на максимальное и минимальное значение,
+ * возвращает true или false
+ *
+ * @param  string $string - проверяемая строка
+ * @param  int $min - минимальное допустимое количество символов
+ * @param  int $max - максимальное допустимое количество символов
+ * @return bool
+ */
+function check_length_of_string($string, $min, $max)
+{
+    if ($string) {
+        $len = strlen($string);
+
+        if ($len >= $min or $len <= $max) {
+            return true;
+        }
     }
 
     return false;
 }
 
 /**
- * Получение незавершенных задач
+ * Функция принимает список задач, проверяет статус выполнения каждой задачи,
+ * если задача не завершена, вносит задачу в возвращаемый список
  *
- * @param  mixed $tasks
- * @return void
+ * @param  array $tasks - массив с задачами
+ * @return array - отфильтрованный массив
  */
 function get_user_no_completed_tasks($tasks)
 {
@@ -103,22 +81,22 @@ function get_user_no_completed_tasks($tasks)
     return $no_completed_tasks;
 }
 
-
 /**
- * Получение задач на повестке дня
+ * Функция принимает список задач, сравнивает дату срока выполнения задачи
+ * с сегодняшней, если даты равны, вносит задачу в возвращаемый список
  *
- * @param  mixed $tasks
- * @param  mixed $filter
- * @return void
+ * @param  array $tasks - массив с задачами
+ * @return array - отфильтрованный массив
  */
 function get_today_tasks($tasks)
 {
     $result = [];
-    $current_date = time();
-    $today = strtotime("tomorrow 00:00:00");
+    $today = date('Y-m-d');
 
     foreach($tasks as $task) {
-        if ($task['deadline'] > $current_date && $task['deadline'] < $today) {
+        $deadline = date('Y-m-d', strtotime($task['deadline']));
+
+        if ($deadline === $today) {
             $result[] = $task;
         }
     }
@@ -127,20 +105,21 @@ function get_today_tasks($tasks)
 }
 
 /**
- * Получение задач на завтра
+ * Функция принимает список задач, сравнивает дату срока выполнения задачи
+ * с завтрашней, если даты равны, вносит задачу в возвращаемый список
  *
- * @param  mixed $tasks
- * @param  mixed $filter
- * @return array
+ * @param  array $tasks - массив с задачами
+ * @return array - отфильтрованный массив
  */
 function get_tomorrow_tasks($tasks)
 {
     $result = [];
-    $today = strtotime("tomorrow 00:00:00");
-    $tommorow = strtotime("tomorrow 29:59:59");
+    $tomorrow = date('Y-m-d', strtotime('tomorrow'));
 
     foreach($tasks as $task) {
-        if ($task['deadline'] > $today && $task['deadline'] <= $tommorow) {
+        $deadline = date('Y-m-d', strtotime($task['deadline']));
+
+        if ($deadline === $tomorrow) {
             $result[] = $task;
         }
     }
@@ -149,19 +128,22 @@ function get_tomorrow_tasks($tasks)
 }
 
 /**
- * Получение просроченных задач
+ * Функция принимает список задач, сравнивает дату срока выполнения задачи
+ * с сегодняшней, если дата задачи меньше, вносит задачу в возвращаемый список
+ * с просроченными задачами
  *
- * @param  mixed $tasks
- * @param  mixed $filter
- * @return array
+ * @param  array $tasks - массив с задачами
+ * @return array - отфильтрованный массив
  */
 function get_overday_tasks($tasks)
 {
     $result = [];
-    $current_date = time();
+    $today = date('Y-m-d');
 
     foreach($tasks as $task) {
-        if ($task['deadline'] < $current_date) {
+        $deadline = date('Y-m-d', strtotime($task['deadline']));
+
+        if ($deadline < $today) {
             $result[] = $task;
         }
     }
