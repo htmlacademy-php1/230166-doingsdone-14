@@ -11,7 +11,7 @@ $user_id = $user['id'];
 $projects = get_projects($con, $user_id);
 $errors = [];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $task_name = trim(filter_input(INPUT_POST, 'task_name'));
     $project_id = filter_input(INPUT_POST, 'project_id');
     $deadline = filter_input(INPUT_POST, 'deadline');
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (!$task_name) {
         $errors['task_name'] = 'Поле надо заполнить';
-    } elseif (!check_length($task_name, 1, 128)) {
+    } elseif (!check_length_of_string($task_name, 1, 128)) {
         $errors['task_name'] = 'Количество символов должно быть не более 128';
     }
 
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($deadline && !is_date_valid($deadline)) {
         $errors['deadline'] = 'Неправильный формат даты';
-    } elseif ($deadline && !check_correct_date($deadline)) {
+    } elseif ($deadline && $deadline < date('Y-m-d')) {
         $errors['deadline'] = 'Дата должна быть больше или равна текущей';
     }
 
@@ -48,10 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         move_uploaded_file($_FILES['file']['tmp_name'], $file_path . $file_name);
         $file_url = 'uploads/' . $file_name;
+    } else {
+        $file_url = null;
     }
 
     if (empty($errors)) {
         add_task($con, [$task_name, $file_url, $deadline, $project_id, $user_id]);
+
         header('Location: index.php');
         exit();
     }

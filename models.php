@@ -1,9 +1,10 @@
 <?php
 
 /**
- * Показ ошибки
+ * Функция проверяет код состояния ответа, и возвращает один из
+ * трёх шаблонов с текстом ошибки, для 404, для 500 и для остальных
  *
- * @param string
+ * @param string - текст ошибки
  * @return string
 */
 function show_error($error)
@@ -16,14 +17,15 @@ function show_error($error)
         $page_content = include_template('error.php', ['error' => $error]);
     }
 
-    exit($page_content);
+    exit($content);
 }
 
 /**
- * получение списка из всех проектов для одного пользователя
+ * Функция принимает id пользователя и возвращает список проектов
+ * созданных этим пользователем и количество задач для каждого проекта
  *
- * @param  mysqli $con
- * @param  int $user_id
+ * @param  mysqli $con - Ресурс соединения
+ * @param  int $user_id - id пользователя
  * @return array
  */
 function get_projects($con, $user_id)
@@ -41,13 +43,16 @@ function get_projects($con, $user_id)
 }
 
 /**
- * получение списка из всех задач для одного пользователя
+ * Функция принимает id пользователя и id проекта. Id проекта по умолчанию равен null
+ * Если id проекта равено null, то функция возвращает все задачи пользователя
+ * Если не равен, возвращает список задач для одного проекта
  *
- * @param  mysqli $con
- * @param  int $user_id
+ * @param  mysqli $con - Ресурс соединения
+ * @param  int $user_id - id пользователя
+ * @param  int $project_id - id проекта
  * @return array
  */
-function get_all_user_tasks($con, $user_id, $project_id = null)
+function get_user_tasks($con, $user_id, $project_id = null)
 {
     $user_id = mysqli_real_escape_string($con, $user_id);
 
@@ -72,15 +77,15 @@ function get_all_user_tasks($con, $user_id, $project_id = null)
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
-    show_error('get_all_user_tasks ' . mysqli_error($con));
+    show_error('get_user_tasks ' . mysqli_error($con));
 }
 
 /**
- * Получение пользователя по email
+ * Функция принимает email пользователя и возвращает запись из БД с этим пользователем
  *
  * @param mysqli $con Ресурс соединения
- * @param string $email почта пользователя
- * @return int
+ * @param string $email почта
+ * @return array
 */
 function get_сurrent_user($con, $email)
 {
@@ -96,10 +101,11 @@ function get_сurrent_user($con, $email)
 }
 
 /**
- * Получение задач по поиску
+ * Функция принимает строку и ищет записи в таблице по нестрогому
+ * совпадению текста в названии задачи. Возвращает список задач
  *
  * @param mysqli $con Ресурс соединения
- * @param string $search хэштег или строка поиска
+ * @param string $search строка поиска
  * @return array
 */
 function get_search_results($con, $search)
@@ -119,11 +125,12 @@ function get_search_results($con, $search)
 }
 
 /**
- * Проверка на существование проекта по id
+ * Функция принимает id проекта и ищет запись с таким же id в таблице проектов,
+ * если находит возвращает массив с id, или пустой массив, который приводит к булеву типу
  *
- * @param  mysqli $con
- * @param  int $project_id
- * @return boolean
+ * @param  mysqli $con Ресурс соединения
+ * @param  int $project_id - id проекта
+ * @return bool
  */
 function check_project_id($con, $project_id)
 {
@@ -132,24 +139,19 @@ function check_project_id($con, $project_id)
     $result = mysqli_query($con, $sql);
 
     if ($result) {
-        $id = mysqli_fetch_assoc($result);
-
-        if ($id) {
-            return true;
-        }
-
-        else return false;
+        return (bool) mysqli_fetch_assoc($result);
     }
 
     show_error('check_project_id ' . mysqli_error($con));
 }
 
 /**
- * Проверка на существование пользователя по id
+ * Функция принимает id пользователя и ищет запись с таким же id в таблице пользователей,
+ * если находит возвращает массив с id, или пустой массив, который приводит к булеву типу
  *
  * @param  mysqli $con
  * @param  int $project_id
- * @return boolean
+ * @return bool
  */
 function check_user_id($con, $user_id)
 {
@@ -158,20 +160,15 @@ function check_user_id($con, $user_id)
     $result = mysqli_query($con, $sql);
 
     if ($result) {
-        $id = mysqli_fetch_assoc($result);
-
-        if ($id) {
-            return true;
-        }
-
-        else return false;
+        return (bool) mysqli_fetch_assoc($result);
     }
 
     show_error('check_user_id ' . mysqli_error($con));
 }
 
 /**
- * Проверка email
+ * Функция принимает email пользователя и ищет запись с таким же email в таблице пользователей,
+ * если находит возвращает массив с email, или пустой массив, который приводит к булеву типу
  *
  * @param  mysqli $con
  * @param  string $email
@@ -184,19 +181,15 @@ function check_user_email($con, $email)
     $result = mysqli_query($con, $sql);
 
     if ($result) {
-        $email = mysqli_fetch_assoc($result);
-
-        if ($email) {
-            return true;
-        }
-        return false;
+        return (bool) mysqli_fetch_assoc($result);
     }
 
     show_error('check_user_email ' . mysqli_error($con));
 }
 
 /**
- * Проверка на существование проекта
+ * Функция принимает название проекта и ищет запись в таблице проектов, если находит
+ * возвращает массив с названием, или пустой массив, который приводит к булеву типу
  *
  * @param  mysqli $con
  * @param  string $project_name
@@ -209,19 +202,15 @@ function check_project_name($con, $project_name)
     $result = mysqli_query($con, $sql);
 
     if ($result) {
-        $project_name = mysqli_fetch_assoc($result);
-
-        if ($project_name) {
-            return true;
-        }
-        return false;
+        return (bool) mysqli_fetch_assoc($result);
     }
 
     show_error('check_project_name ' . mysqli_error($con));
 }
 
 /**
- * Проверка на существование задачи по id
+ * Функция принимает название id задачи и ищет запись в таблице задач, если запись есть
+ * возвращает массив с id, или пустой массив, который приводит к булеву типу
  *
  * @param  mysqli $con
  * @param  int $task_id
@@ -234,19 +223,15 @@ function check_task_id($con, $task_id)
     $result = mysqli_query($con, $sql);
 
     if ($result) {
-        $task_id = mysqli_fetch_assoc($result);
-
-        if ($task_id) {
-            return true;
-        }
-        return false;
+        return (bool) mysqli_fetch_assoc($result);
     }
 
     show_error('check_task_id ' . mysqli_error($con));
 }
 
 /**
- * Добавление задачи
+ * Функция принимает массив с полученными данными от пользвателя и добавляет новую задачу в БД
+ * через подставленные выражения для защиты от XSS атак или возвращает ошибку
  *
  * @param  mysqli $con
  * @param  array $values
@@ -264,10 +249,11 @@ function add_task($con, $values)
 }
 
 /**
- * Добавление нового пользователя
+ * Функция принимает массив с полученными данными от пользвателя и добавляет нового пользователя в БД
+ * через подставленные выражения для защиты от XSS атак или возвращает ошибку
  *
  * @param  mysqli $con
- * @param  array $values
+ * @param  array $values - массив с email, password, login
  * @return void
  */
 function add_user($con, $values)
@@ -282,11 +268,12 @@ function add_user($con, $values)
 }
 
 /**
- * Добавление проекта
+ * Функция принимает массив с полученными данными от пользвателя и добавляет новый проект в БД
+ * через подставленные выражения для защиты от XSS атак или возвращает ошибку
  *
  * @param  mysqli $con
- * @param  array $project_name
- * @param  array $user_id
+ * @param  string $project_name
+ * @param  int $user_id
  * @return void
  */
 function add_project($con, $project_name, $user_id)
@@ -304,8 +291,7 @@ function add_project($con, $project_name, $user_id)
  * Отмечает что задача выполнена
  *
  * @param  mysqli $con
- * @param  array $project_name
- * @param  array $user_id
+ * @param  int $task_id - id задачи
  * @return void
  */
 function complete_task($con, $task_id)
@@ -323,8 +309,7 @@ function complete_task($con, $task_id)
  * Отмечает что задача не выполнена
  *
  * @param  mysqli $con
- * @param  array $project_name
- * @param  array $user_id
+ * @param  int $task_id - id задачи
  * @return void
  */
 function remove_complete_task($con, $task_id)

@@ -25,7 +25,7 @@
                 >
                 <?php if (isset($errors['task_name'])) : ?>
                     <p class="form__message"><?= esc($errors['task_name']); ?></p>
-                <? endif; ?>
+                <?php endif; ?>
             </div>
 
             <div class="form__row">
@@ -40,11 +40,11 @@
                     <option value="<?= esc($project['id']); ?>">
                         <?= esc($project['name']); ?>
                     </option>
-                    <? endforeach; ?>
+                    <?php endforeach; ?>
                 </select>
                 <?php if (isset($errors['project_id'])) : ?>
                     <p class="form__message"><?= esc($errors['project_id']); ?></p>
-                <? endif; ?>
+                <?php endif; ?>
             </div>
 
             <div class="form__row">
@@ -59,7 +59,7 @@
                 >
                 <?php if (isset($errors['deadline'])) : ?>
                     <p class="form__message"><?= esc($errors['deadline']); ?></p>
-                <? endif; ?>
+                <?php endif; ?>
             </div>
 
             <div class="form__row">

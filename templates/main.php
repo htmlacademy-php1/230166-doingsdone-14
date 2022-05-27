@@ -15,7 +15,12 @@
     <main class="content__main">
         <h2 class="content__main-heading">Список задач</h2>
 
-        <form class="search-form" action="index.php" method="get" autocomplete="off">
+        <form
+            class="search-form"
+            action="index.php?filter=<?= $filter ?>&task_id=<?= $task_id ?>&check=<?= $task_check ?>&show_completed=<?= $show_completed_tasks ?>"
+            method="get"
+            autocomplete="off"
+        >
             <input
                 class="search-form__input"
                 type="text"
@@ -62,7 +67,7 @@
         <table class="tasks">
             <?php if ($search && !$tasks) : ?>
             <p>Ничего не найдено по вашему запросу</p>
-            <? endif; ?>
+            <?php endif; ?>
             <?php foreach ($tasks as $task) : ?>
 
             <tr class="tasks__item task
@@ -88,14 +93,14 @@
                     <a class="download-link" href="<?= $task['file_url'] ?>">
                         Скачать файл
                     </a>
-                    <? endif; ?>
+                    <?php endif; ?>
                 </td>
 
                 <td class="task__date">
                     <?= $task['deadline'] ? date('Y-m-d', strtotime(esc($task['deadline']))) : 'Без даты'; ?>
                 </td>
             </tr>
-            <? endforeach; ?>
+            <?php endforeach; ?>
         </table>
     </main>
 </div>

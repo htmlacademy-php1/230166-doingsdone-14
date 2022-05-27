@@ -6,9 +6,11 @@
 
     <main class="content__main">
         <h2 class="content__main-heading">Регистрация аккаунта</h2>
-       <form class="form" action="register.php" method="post" autocomplete="off">
+
+        <form class="form" action="register.php" method="post" autocomplete="off">
             <div class="form__row">
                 <label class="form__label" for="email">E-mail <sup>*</sup></label>
+
                 <input
                     class="form__input <?= isset($errors['email']) ? 'form__input--error' : ''; ?>"
                     type="text" name="email"
@@ -16,13 +18,15 @@
                     value="<?= isset($email) ? esc($email) : ''; ?>"
                     placeholder="Введите e-mail"
                 >
+
                 <?php if (isset($errors['email'])) : ?>
                 <p class="form__message"><?= $errors['email']; ?></p>
-                <? endif; ?>
+                <?php endif; ?>
             </div>
 
             <div class="form__row">
                 <label class="form__label" for="password">Пароль <sup>*</sup></label>
+
                 <input
                     class="form__input <?= isset($errors['password']) ? 'form__input--error' : ''; ?>"
                     type="password"
@@ -31,13 +35,15 @@
                     value=""
                     placeholder="Введите пароль"
                 >
+
                 <?php if (isset($errors['password'])) : ?>
                 <p class="form__message"><?= $errors['password']; ?></p>
-                <? endif; ?>
+                <?php endif; ?>
             </div>
 
             <div class="form__row">
                 <label class="form__label" for="name">Имя <sup>*</sup></label>
+
                 <input
                     class="form__input <?= isset($errors['login']) ? 'form__input--error' : ''; ?>"
                     type="text"
@@ -46,15 +52,17 @@
                     value="<?= isset($login) ? esc($login) : ''; ?>"
                     placeholder="Введите имя"
                 >
+
                 <?php if (isset($errors['login'])) : ?>
                 <p class="form__message"><?= $errors['login']; ?></p>
-                <? endif; ?>
+                <?php endif; ?>
             </div>
 
             <div class="form__row form__row--controls">
                 <?php if ($errors) : ?>
                 <p class="error-message">Пожалуйста, исправьте ошибки в форме</p>
-                <? endif; ?>
+                <?php endif; ?>
+
                 <input class="button" type="submit" name="" value="Зарегистрироваться">
             </div>
         </form>

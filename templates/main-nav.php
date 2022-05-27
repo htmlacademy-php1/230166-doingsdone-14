@@ -9,6 +9,6 @@
                 <?= esc($project['count_tasks']); ?>
             </span>
         </li>
-        <? endforeach; ?>
+        <?php endforeach; ?>
     </ul>
 </nav>

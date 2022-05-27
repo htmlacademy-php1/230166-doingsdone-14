@@ -20,7 +20,7 @@
                 >
                 <?php if (isset($errors['email'])) : ?>
                 <p class="form__message"><?= $errors['email']; ?></p>
-                <? endif; ?>
+                <?php endif; ?>
             </div>
             <div class="form__row">
                 <label class="form__label" for="password">Пароль <sup>*</sup></label>
@@ -34,7 +34,7 @@
                 >
                 <?php if (isset($errors['password'])) : ?>
                 <p class="form__message"><?= $errors['password']; ?></p>
-                <? endif; ?>
+                <?php endif; ?>
             </div>
             <div class="form__row form__row--controls">
                 <input class="button" type="submit" name="" value="Войти">
