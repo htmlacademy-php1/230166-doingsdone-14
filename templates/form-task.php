@@ -12,6 +12,7 @@
     <main class="content__main">
         <h2 class="content__main-heading">Добавление задачи</h2>
 
+        <?php if ($projects) : ?>
         <form class="form" action="add-task.php" method="post" autocomplete="off" enctype="multipart/form-data">
             <div class="form__row">
                 <label class="form__label" for="name">Название <sup>*</sup></label>
@@ -83,5 +84,9 @@
                 <input class="button" type="submit" name="" value="Добавить">
             </div>
         </form>
+        <?php else : ?>
+            <p>Надо сначала добавить проект, в который будут добавляться задачи. Например "Домашние дела".</p>
+            <a class="button button--transparent button--plus content__side-button" href="add-project.php">Добавить проект</a>
+        <?php endif; ?>
     </main>
 </div>
